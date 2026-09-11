@@ -12,7 +12,6 @@
             padding: 0;
             font-family: 'Cairo', sans-serif;
         }
-
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #f8fafc;
@@ -22,433 +21,78 @@
             align-items: center;
             padding: 20px;
         }
-
         header {
             text-align: center;
             margin-bottom: 20px;
         }
-
         h1 {
             font-size: 2.5rem;
             color: #38bdf8;
-            font-weight: 900;
-            text-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+            margin-bottom: 5px;
         }
-
-        p.subtitle {
-            color: #94a3b8;
-            font-size: 1rem;
-        }
-
-        .main-container {
-            display: flex;
-            flex-direction: row;
-            gap: 25px;
-            max-width: 1000px;
-            width: 100%;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .board-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .player-info {
-            display: flex;
-            justify-content: space-between;
-            width: 420px;
-            padding: 10px 15px;
-            background: #1e293b;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-weight: 600;
-            border: 1px solid #334155;
-        }
-
-        .player-info.active {
-            border-color: #38bdf8;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
-        }
-
-        .timer {
-            font-family: monospace;
-            background: #0f172a;
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: #38bdf8;
-        }
-
-        /* رقعة الشطرنج */
-        .chessboard {
+        .board {
             display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            width: 420px;
-            height: 420px;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
             border: 4px solid #334155;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            background: #334155;
+            overflow: hidden;
         }
-
         .square {
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            justify-content: center;
+            font-size: 2.2rem;
             cursor: pointer;
             user-select: none;
-            position: relative;
-            transition: background 0.2s;
         }
-
-        .square.light {
-            background-color: #e2e8f0;
+        .light {
+            background-color: #f1f5f9;
             color: #0f172a;
         }
-
-        .square.dark {
-            background-color: #64748b;
-            color: #0f172a;
-        }
-
-        .square.selected {
-            background-color: #38bdf8 !important;
-        }
-
-        .square.highlight::after {
-            content: '';
-            width: 16px;
-            height: 16px;
-            background-color: rgba(16, 185, 129, 0.7);
-            border-radius: 50%;
-            position: absolute;
-        }
-
-        .square.capture::after {
-            content: '';
-            width: 100%;
-            height: 100%;
-            border: 4px solid rgba(239, 68, 68, 0.8);
-            position: absolute;
-            border-radius: 4px;
-        }
-
-        /* لوحة الجانب (التحكم وسجل الحركات) */
-        .sidebar {
-            width: 300px;
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid #334155;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .sidebar h3 {
-            color: #38bdf8;
-            font-size: 1.2rem;
-            border-bottom: 2px solid #334155;
-            padding-bottom: 8px;
-        }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        button {
-            background: #0284c7;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background: #0369a1;
-        }
-
-        button.secondary {
-            background: #475569;
-        }
-
-        button.secondary:hover {
-            background: #334155;
-        }
-
-        .move-history {
-            background: #0f172a;
-            border-radius: 6px;
-            height: 180px;
-            overflow-y: auto;
-            padding: 10px;
-            font-size: 0.9rem;
-            border: 1px solid #334155;
-        }
-
-        .move-history ol {
-            padding-right: 20px;
-        }
-
-        .move-history li {
-            margin-bottom: 4px;
-            color: #cbd5e1;
-        }
-
-        .status-msg {
-            text-align: center;
-            font-weight: bold;
-            color: #facc15;
-            min-height: 24px;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .player-info, .chessboard {
-                width: 340px;
-                height: 340px;
-            }
-            .sidebar {
-                width: 340px;
-            }
+        .dark {
+            background-color: #475569;
+            color: #f8fafc;
         }
     </style>
 </head>
 <body>
-
     <header>
         <h1>شطرنجي</h1>
-        <p class="subtitle">العب الشطرنج مجاناً وبكل سهولة مع أصدقائك</p>
+        <p>منصة الشطرنج العربية التفاعلية</p>
     </header>
 
-    <div class="main-container">
-        <!-- رقعة الشطرنج -->
-        <div class="board-section">
-            <div id="player2-box" class="player-info">
-                <span>اللاعب الأسود (♟)</span>
-                <span id="timer2" class="timer">10:00</span>
-            </div>
-
-            <div class="chessboard" id="chessboard"></div>
-
-            <div id="player1-box" class="player-info active">
-                <span>اللاعب الأبيض (♙)</span>
-                <span id="timer1" class="timer">10:00</span>
-            </div>
-        </div>
-
-        <!-- لوحة التحكم والتحركات -->
-        <div class="sidebar">
-            <div class="status-msg" id="statusMsg">دور اللاعب الأبيض</div>
-            <div class="controls">
-                <button onclick="resetGame()">لعبة جديدة</button>
-            </div>
-            <h3>سجل الحركات</h3>
-            <div class="move-history">
-                <ol id="moveList"></ol>
-            </div>
-        </div>
-    </div>
+    <div class="board" id="chessboard"></div>
 
     <script>
         const initialBoard = [
-            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
+            ["♜","♞","♝","♛","♚","♝","♞","♜"],
+            ["♟","♟","♟","♟","♟","♟","♟","♟"],
+            ["","","","","","","",""],
+            ["","","","","","","",""],
+            ["","","","","","","",""],
+            ["","","","","","","",""],
+            ["♙","♙","♙","♙","♙","♙","♙","♙"],
+            ["♖","♘","♗","♕","♔","♗","♘","♖"]
         ];
 
-        const pieceSymbols = {
-            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
-            'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
-        };
+        const boardElement = document.getElementById("chessboard");
 
-        let board = JSON.parse(JSON.stringify(initialBoard));
-        let turn = 'white'; // 'white' أو 'black'
-        let selectedSquare = null;
-        let validMoves = [];
-        let moveHistoryList = [];
-
-        function renderBoard() {
-            const boardElement = document.getElementById('chessboard');
-            boardElement.innerHTML = '';
-
+        function drawBoard() {
+            boardElement.innerHTML = "";
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
-                    const square = document.createElement('div');
-                    square.classList.add('square');
-                    square.classList.add((r + c) % 2 === 0 ? 'light' : 'dark');
-                    square.dataset.row = r;
-                    square.dataset.col = c;
-
-                    const piece = board[r][c];
-                    if (piece) {
-                        square.textContent = pieceSymbols[piece] || '';
-                    }
-
-                    if (selectedSquare && selectedSquare.row === r && selectedSquare.col === c) {
-                        square.classList.add('selected');
-                    }
-
-                    const isValid = validMoves.some(m => m.r === r && m.c === c);
-                    if (isValid) {
-                        if (piece) {
-                            square.classList.add('capture');
-                        } else {
-                            square.classList.add('highlight');
-                        }
-                    }
-
-                    square.addEventListener('click', () => handleSquareClick(r, c));
+                    const square = document.createElement("div");
+                    square.classList.add("square");
+                    square.classList.add((r + c) % 2 === 0 ? "light" : "dark");
+                    square.textContent = initialBoard[r][c];
                     boardElement.appendChild(square);
                 }
             }
         }
 
-        function handleSquareClick(r, c) {
-            const piece = board[r][c];
-            const isWhitePiece = piece && piece === piece.toUpperCase();
-            const isBlackPiece = piece && piece === piece.toLowerCase();
-
-            if (selectedSquare) {
-                const moveIndex = validMoves.findIndex(m => m.r === r && m.c === c);
-                if (moveIndex !== -1) {
-                    // تنفيذ الحركة
-                    movePiece(selectedSquare.row, selectedSquare.col, r, c);
-                    selectedSquare = null;
-                    validMoves = [];
-                    turn = turn === 'white' ? 'black' : 'white';
-                    updateTurnUI();
-                } else if ((turn === 'white' && isWhitePiece) || (turn === 'black' && isBlackPiece)) {
-                    selectedSquare = { row: r, col: c };
-                    validMoves = getBasicMoves(r, c);
-                } else {
-                    selectedSquare = null;
-                    validMoves = [];
-                }
-            } else {
-                if ((turn === 'white' && isWhitePiece) || (turn === 'black' && isBlackPiece)) {
-                    selectedSquare = { row: r, col: c };
-                    validMoves = getBasicMoves(r, c);
-                }
-            }
-            renderBoard();
-        }
-
-        function getBasicMoves(r, c) {
-            let moves = [];
-            let piece = board[r][c];
-            let isWhite = piece === piece.toUpperCase();
-            let dir = isWhite ? -1 : 1;
-
-            // حركة البيدق المبسطة كمثال تفاعلي
-            if (piece.toLowerCase() === 'p') {
-                let nextR = r + dir;
-                if (nextR >= 0 && nextR < 8 && !board[nextR][c]) {
-                    moves.push({ r: nextR, c: c });
-                    if ((isWhite && r === 6) || (!isWhite && r === 1)) {
-                        let doubleR = r + dir * 2;
-                        if (!board[doubleR][c] && !board[nextR][c]) {
-                            moves.push({ r: doubleR, c: c });
-                        }
-                    }
-                }
-                // الأكل القطري
-                [-1, 1].forEach(dc => {
-                    let nc = c + dc;
-                    let nr = r + dir;
-                    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                        let target = board[nr][nc];
-                        if (target && (isWhite ? target === target.toLowerCase() : target === target.toUpperCase())) {
-                            moves.push({ r: nr, c: nc });
-                        }
-                    }
-                });
-            } else {
-                // بقية القطع حركة استكشافية بسيطة للمربع المجاور للتوضيح
-                for (let dr = -1; dr <= 1; dr++) {
-                    for (let dc = -1; dc <= 1; dc++) {
-                        if (dr === 0 && dc === 0) continue;
-                        let nr = r + dr, nc = c + dc;
-                        if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                            let target = board[nr][nc];
-                            if (!target || (isWhite ? target === target.toLowerCase() : target === target.toUpperCase())) {
-                                moves.push({ r: nr, c: nc });
-                            }
-                        }
-                    }
-                }
-            }
-            return moves;
-        }
-
-        function movePiece(fromR, fromC, toR, toC) {
-            let movingPiece = board[fromR][fromC];
-            board[toR][toC] = movingPiece;
-            board[fromR][fromC] = '';
-
-            moveHistoryList.push(`${movingPiece} من (${fromR},${fromC}) إلى (${toR},${toC})`);
-            updateMoveHistory();
-        }
-
-        function updateMoveHistory() {
-            const list = document.getElementById('moveList');
-            list.innerHTML = '';
-            moveHistoryList.forEach(m => {
-                const li = document.createElement('li');
-                li.textContent = m;
-                list.appendChild(li);
-            });
-        }
-
-        function updateTurnUI() {
-            const statusMsg = document.getElementById('statusMsg');
-            const p1Box = document.getElementById('player1-box');
-            const p2Box = document.getElementById('player2-box');
-
-            if (turn === 'white') {
-                statusMsg.textContent = "دور اللاعب الأبيض";
-                p1Box.classList.add('active');
-                p2Box.classList.remove('active');
-            } else {
-                statusMsg.textContent = "دور اللاعب الأسود";
-                p2Box.classList.add('active');
-                p1Box.classList.remove('active');
-            }
-        }
-
-        function resetGame() {
-            board = JSON.parse(JSON.stringify(initialBoard));
-            turn = 'white';
-            selectedSquare = null;
-            validMoves = [];
-            moveHistoryList = [];
-            updateMoveHistory();
-            updateTurnUI();
-            renderBoard();
-        }
-
-        // التشغيل الأولي
-        renderBoard();
+        drawBoard();
     </script>
 </body>
 </html>
