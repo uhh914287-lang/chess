@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شطرنجي - موسوعة ومستكشف الشطرنج</title>
+    <title>شطرنجي - المنصة الأسطورية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
@@ -11,123 +11,85 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', sans-serif;
+        :root {
+            --bg-deep: #090d16;
+            --bg-panel: #131b2e;
+            --accent-green: #22c55e;
+            --accent-brilliant: #06b6d4;
+            --accent-blunder: #ef4444;
+            --accent-good: #3b82f6;
+            --text-main: #f8fafc;
         }
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        h1 {
-            font-size: 2rem;
-            color: #38bdf8;
-        }
-        .main-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            max-width: 1050px;
-            width: 100%;
-        }
-        #board {
-            width: 400px;
-            max-width: 100%;
-        }
-        .panel {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            width: 340px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        button {
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            padding: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background: #0ea5e9;
-        }
-        .info-box {
-            background: #0f172a;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #334155;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        .explorer-list {
-            max-height: 150px;
-            overflow-y: auto;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            padding: 5px;
-        }
-        .explorer-item {
-            padding: 5px 8px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            margin-bottom: 2px;
-            background: rgba(255,255,255,0.03);
-            transition: background 0.2s;
-        }
-        .explorer-item:hover {
-            background: #38bdf8;
-            color: #0f172a;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-deep); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 10px; }
+        header { text-align: center; margin-bottom: 8px; }
+        h1 { font-size: 1.8rem; color: #38bdf8; font-weight: 900; }
+        
+        .main-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; max-width: 1200px; width: 100%; }
+        
+        /* رقعة بنفس تصميم وألوان Chess.com الحديثة */
+        #board-container { width: 450px; max-width: 100%; background: #262421; padding: 10px; border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+        .white-1e1d7 { background-color: #ebecd0 !important; color: #b58863; }
+        .black-3c85d { background-color: #779556 !important; color: #f0d9b5; }
+        
+        .sidebar { background: var(--bg-panel); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; width: 380px; display: flex; flex-direction: column; gap: 10px; max-height: 600px; overflow-y: auto; }
+        
+        .section-title { font-size: 0.95rem; font-weight: 700; color: #38bdf8; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
+        
+        textarea, input[type="text"] { width: 100%; background: #0b0f19; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; font-size: 0.85rem; resize: none; }
+        
+        .btn-group { display: flex; gap: 6px; }
+        button { flex: 1; background: #3b82f6; color: #fff; border: none; padding: 8px; font-size: 0.85rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        button:hover { filter: brightness(1.15); }
+        button.secondary { background: #475569; }
+
+        /* تلميحات وتقييمات أسلوب Chess.com و Magnus */
+        .eval-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 5px; }
+        .badge-brilliant { background: #06b6d4; color: #000; }
+        .badge-good { background: #22c55e; color: #000; }
+        .badge-blunder { background: #ef4444; color: #fff; }
+
+        .magnus-box { background: #090d16; border-left: 4px solid #f59e0b; padding: 10px; border-radius: 6px; font-size: 0.85rem; line-height: 1.4; }
+        
+        .puzzle-section { background: #1e293b; padding: 8px; border-radius: 6px; border: 1px dashed #64748b; text-align: center; font-size: 0.85rem; }
     </style>
 </head>
 <body>
     <header>
-        <h1>شطرنجي - مع المستكشف والتحليل</h1>
-        <p>استعراض الافتتاحيات والمواقف بذكاء اصطناعي</p>
+        <h1>شطرنجي - المنصة الملكية الشاملة</h1>
+        <p>تحليل فائق، تعليق ماغنوس كارلسن الذكي، واستيراد الـ PGN</p>
     </header>
 
     <div class="main-container">
-        <div id="board"></div>
+        <!-- الرقعة -->
+        <div id="board-container">
+            <div id="board" style="width: 100%;"></div>
+        </div>
 
-        <div class="panel">
-            <h3>لوحة التحكم</h3>
-            <div class="info-box" id="status">الدور: الأبيض</div>
-            <div class="info-box" id="opening-name"><b>الافتتاحية الحالية:</b> البداية</div>
-            
-            <!-- قسم المستكشف الجانبي -->
-            <div style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">مستكشف الافتتاحيات السريع:</div>
-            <div class="explorer-list" id="explorer-box">
-                <!-- يتم تعبئتها تلقائياً عبر ملف explorer.js -->
+        <!-- اللوحة الجانبية الشاملة -->
+        <div class="sidebar">
+            <div class="section-title">📥 مستورد المباريات والـ PGN والبيانات</div>
+            <textarea id="pgn-input" rows="2" placeholder="الصق كود PGN هنا أو بيانات اللعبة..."></textarea>
+            <div class="btn-group">
+                <button id="load-pgn-btn">تحميل اللعبة</button>
+                <button class="secondary" id="reset-btn">إعادة ضبط</button>
             </div>
 
-            <button id="analyze-btn">تحليل الموقف (Stockfish)</button>
-            <div class="info-box" id="eval-result">اضغط على زر التحليل لقراءة تقييم الذكاء الاصطناعي...</div>
-            <button id="reset-btn" style="background: #64748b; color: #fff;">إعادة ضبط اللوحة</button>
+            <div class="section-title">🎙️ تحليل المدرب الخبير (صوت ماغنوس كارلسن الافتراضي)</div>
+            <div class="magnus-box" id="magnus-commentary">
+                <b>ماغنوس كارلسن:</b> "أهلاً بك. العب نقلتك الأولى وسأقوم بحساب تفريعات ومفاجآت الموقف فورياً!"
+            </div>
+            <button id="analyze-btn" style="background: #10b981;">تحليل عميق بالمحرك (Stockfish)</button>
+            <div id="eval-details" style="font-size: 0.82rem; background: #090d16; padding: 8px; border-radius: 6px;">التقييم الحالي: متعادل (0.00)</div>
+
+            <div class="section-title">🧩 فرع الألغاز الذكية (قيد التوسع)</div>
+            <div class="puzzle-section">
+                <span>وضع الألغاز مفعل جاهز لاستقبال تدريباتك المستقبلية.</span>
+            </div>
         </div>
     </div>
 
-    <!-- استدعاء الملفات البرمجية المنفصلة -->
+    <!-- استدعاء ملفات المنطق والمستكشف الجانبية المنفصلة -->
     <script src="game.js"></script>
     <script src="explorer.js"></script>
 </body>
