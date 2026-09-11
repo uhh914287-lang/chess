@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شطرنجي - منصة الشطرنج العربية</title>
+    <title>شطرنجي - منصة الشطرنج العربية التفاعلية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -23,12 +23,20 @@
         }
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: #38bdf8;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
+        }
+        #status {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 16px;
+            border-radius: 20px;
         }
         .board {
             display: grid;
@@ -46,6 +54,7 @@
             font-size: 2.2rem;
             cursor: pointer;
             user-select: none;
+            transition: background-color 0.2s;
         }
         .light {
             background-color: #f1f5f9;
@@ -55,6 +64,12 @@
             background-color: #475569;
             color: #f8fafc;
         }
+        .selected {
+            background-color: #38bdf8 !important;
+        }
+        .highlight {
+            background-color: #94a3b8 !important;
+        }
     </style>
 </head>
 <body>
@@ -63,9 +78,34 @@
         <p>منصة الشطرنج العربية التفاعلية</p>
     </header>
 
+    <div id="status">دور اللاعب: الأبيض</div>
     <div class="board" id="chessboard"></div>
 
     <script>
+        // توليد صوت الحركة باستخدام تقنية الويب الحية (Web Audio API) بدون الحاجة لملفات خارجية
+        function playMoveSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {
+                // تجاهل إذا لم يدعم المتصفح الصوت تلقائياً
+            }
+        }
+
         const initialBoard = [
             ["♜","♞","♝","♛","♚","♝","♞","♜"],
             ["♟","♟","♟","♟","♟","♟","♟","♟"],
@@ -77,7 +117,20 @@
             ["♖","♘","♗","♕","♔","♗","♘","♖"]
         ];
 
+        let board = JSON.parse(JSON.stringify(initialBoard));
+        let turn = 'white'; // 'white' أو 'black'
+        let selectedSquare = null;
+
         const boardElement = document.getElementById("chessboard");
+        const statusElement = document.getElementById("status");
+
+        function isWhitePiece(piece) {
+            return ["♙","♖","♘","♗","♕","♔"].includes(piece);
+        }
+
+        function isBlackPiece(piece) {
+            return ["♟","♜","♞","♝","♛","♚"].includes(piece);
+        }
 
         function drawBoard() {
             boardElement.innerHTML = "";
@@ -86,9 +139,52 @@
                     const square = document.createElement("div");
                     square.classList.add("square");
                     square.classList.add((r + c) % 2 === 0 ? "light" : "dark");
-                    square.textContent = initialBoard[r][c];
+                    
+                    if (selectedSquare && selectedSquare.row === r && selectedSquare.col === c) {
+                        square.classList.add("selected");
+                    }
+
+                    square.textContent = board[r][c];
+                    square.dataset.row = r;
+                    square.dataset.col = c;
+
+                    square.addEventListener("click", () => handleSquareClick(r, c));
                     boardElement.appendChild(square);
                 }
+            }
+            statusElement.textContent = `دور اللاعب: ${turn === 'white' ? 'الأبيض' : 'الأسود'}`;
+        }
+
+        function handleSquareClick(r, c) {
+            const clickedPiece = board[r][c];
+
+            if (selectedSquare === null) {
+                // اختيار قطعة
+                if (clickedPiece !== "") {
+                    if ((turn === 'white' && isWhitePiece(clickedPiece)) || (turn === 'black' && isBlackPiece(clickedPiece))) {
+                        selectedSquare = { row: r, col: c };
+                        drawBoard();
+                    }
+                }
+            } else {
+                // تحريك القطعة المحددة إلى المربع الجديد
+                if (selectedSquare.row === r && selectedSquare.col === c) {
+                    // إلغاء التحديد عند النقر مرة أخرى على نفس المربع
+                    selectedSquare = null;
+                    drawBoard();
+                    return;
+                }
+
+                // تنفيذ النقلة
+                board[r][c] = board[selectedSquare.row][selectedSquare.col];
+                board[selectedSquare.row][selectedSquare.col] = "";
+                
+                playMoveSound(); // تشغيل صوت الحركة التفاعلي
+
+                // تبديل الدور
+                turn = turn === 'white' ? 'black' : 'white';
+                selectedSquare = null;
+                drawBoard();
             }
         }
 
