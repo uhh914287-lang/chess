@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شطرنجي - منصة التحليل الذكي</title>
+    <title>شطرنجي - منصة التحليل والافتتاحيات</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <!-- مكتبات Chess.js و Chessboard.js و jQuery الشهيرة لتشغيل رقعة شطرنج حقيقية وتحليلها -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
@@ -40,7 +39,7 @@
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
-            max-width: 900px;
+            max-width: 950px;
             width: 100%;
         }
         #board {
@@ -52,10 +51,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px;
             border-radius: 10px;
-            width: 320px;
+            width: 340px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
         button {
             background: #38bdf8;
@@ -71,126 +70,36 @@
         button:hover {
             background: #0ea5e9;
         }
-        .eval-box {
+        .info-box {
             background: #0f172a;
             padding: 10px;
             border-radius: 6px;
             border: 1px solid #334155;
-            min-height: 80px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.5;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>شطرنجي - محلل المباريات</h1>
-        <p>حلل مواقفك بذكاء اصطناعي فوري بملف واحد</p>
+        <h1>شطرنجي - موسوعة الافتتاحيات والمحلل</h1>
+        <p>اكتشاف الافتتاحيات والتحليل بالذكاء الاصطناعي</p>
     </header>
 
     <div class="main-container">
-        <!-- رقعة الشطرنج -->
         <div id="board"></div>
 
-        <!-- لوحة التحكم والتحليل -->
         <div class="panel">
-            <h3>لوحة التحكم</h3>
-            <div id="status">الدور: الأبيض</div>
+            <h3>لوحة التحكم والتحليل</h3>
+            <div class="info-box" id="status">الدور: الأبيض</div>
+            <div class="info-box" id="opening-name"><b>الافتتاحية:</b> اللعبة تبدأ من البداية</div>
             <button id="analyze-btn">تحليل الموقف (Stockfish)</button>
-            <div class="eval-box" id="eval-result">اضغط على زر التحليل لقراءة تقييم الذكاء الاصطناعي...</div>
+            <div class="info-box" id="eval-result">اضغط على زر التحليل لقراءة تقييم الذكاء الاصطناعي...</div>
             <button id="reset-btn" style="background: #64748b; color: #fff;">إعادة ضبط اللوحة</button>
         </div>
     </div>
 
-    <script>
-        var board = null;
-        var game = new Chess();
-        var statusEl = $('#status');
-        var evalResultEl = $('#eval-result');
-
-        // تحديث حالة الدور النصية
-        function updateStatus() {
-            var moveColor = (game.turn() === 'w') ? 'الأبيض' : 'الأسود';
-            if (game.in_checkmate()) {
-                statusEl.text('كش مات! انتهت اللعبة.');
-            } else if (game.in_draw()) {
-                statusEl.text('تعادل!');
-            } else {
-                statusEl.text('دور اللاعب: ' + moveColor);
-                if (game.in_check()) {
-                    statusEl.text(statusEl.text() + ' (كش!)');
-                }
-            }
-        }
-
-        // عند بدء سحب القطعة
-        function onDragStart(source, piece, position, orientation) {
-            if (game.game_over()) return false;
-            // منع تحريك قطع الخصم
-            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                return false;
-            }
-        }
-
-        // عند إفلات القطعة في مربع جديد
-        function onDrop(source, target) {
-            var move = game.move({
-                from: source,
-                to: target,
-                promotion: 'q' // ترقية العساكر تلقائياً لوزير للتسطيح
-            });
-
-            if (move === null) return 'snapback'; // إرجاع القطعة إذا كانت النقلة غير قانونية
-
-            updateStatus();
-        }
-
-        function onSnapEnd() {
-            board.position(game.fen());
-        }
-
-        var config = {
-            draggable: true,
-            position: 'start',
-            onDragStart: onDragStart,
-            onDrop: onDrop,
-            onSnapEnd: onSnapEnd
-        };
-
-        board = Chessboard('board', config);
-        updateStatus();
-
-        // زر إعادة الضبط
-        $('#reset-btn').on('click', function () {
-            game.reset();
-            board.start();
-            updateStatus();
-            evalResultEl.text('تمت إعادة ضبط اللوحة.');
-        });
-
-        // زر تحليل الموقف باستخدام Stockfish عبر الـ API السحابي المجاني
-        $('#analyze-btn').on('click', function () {
-            evalResultEl.text('جاري تحليل الموقف بواسطة المحرك...');
-            var fen = game.fen();
-            
-            // طلب تحليل النقلة الحالية من محرك ستاكفيش السحابي
-            $.get('https://stockfish.online/api/s/v2.php?fen=' + encodeURIComponent(fen) + '&depth=10', function(data) {
-                if (data.success) {
-                    var evaluationText = "";
-                    if (data.mate) {
-                        evaluationText = `マット إماتة قريبة خلال ${data.mate} نقلات!`;
-                    } else {
-                        evaluationText = `التقييم الرقمي: ${data.evaluation > 0 ? '+' : ''}${data.evaluation / 100} (أفضل تفوق)`;
-                    }
-                    evalResultEl.html(`<b>نتيجة التحليل:</b><br>${evaluationText}<br><small>أفضل نقلة مقترحة: ${data.bestmove.split(' ')[1] || 'غير متوفرة'}</small>`);
-                } else {
-                    evalResultEl.text('تعذر الاتصال بالمحرك، جرب مرة أخرى.');
-                }
-            }).fail(function() {
-                evalResultEl.text('خطأ في الاتصال بخدمة التحليل.');
-            });
-        });
-    </script>
+    <!-- استدعاء الملف البرمجي المنفصل -->
+    <script src="game.js"></script>
 </body>
 </html>
