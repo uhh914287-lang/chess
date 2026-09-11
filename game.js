@@ -1,4 +1,3 @@
-// قاعدة بيانات الافتتاحيات
 const openingsDB = {
     "e4": "افتتاحية الملك (King's Pawn Opening)",
     "e4 e5": "لعبة الجانب المفتوح / الافتتاحية الكلاسيكية",
@@ -29,8 +28,7 @@ var evalResultEl = $('#eval-result');
 function checkOpening() {
     var history = game.history();
     var historyString = history.join(" ");
-    
-    let detected = "افتتاحية حرة / غير مسجلة في القائمة الرئيسية";
+    let detected = "افتتاحية حرة / غير مسجلة";
     let matchedKey = "";
     for (let key in openingsDB) {
         if (historyString.startsWith(key)) {
@@ -43,7 +41,7 @@ function checkOpening() {
     if (history.length === 0) {
         detected = "بداية اللعبة (الموقف الابتدائي)";
     }
-    openingEl.html(`<b>الافتتاحية:</b> ${detected}`);
+    openingEl.html(`<b>الافتتاحية الحالية:</b> ${detected}`);
 }
 
 function updateStatus() {
@@ -74,6 +72,7 @@ function onDrop(source, target) {
     });
     if (move === null) return 'snapback';
     updateStatus();
+    if (typeof updateExplorer === 'function') updateExplorer();
 }
 
 function onSnapEnd() {
@@ -96,6 +95,7 @@ $('#reset-btn').on('click', function () {
     board.start();
     updateStatus();
     evalResultEl.text('تمت إعادة ضبط اللوحة.');
+    if (typeof updateExplorer === 'function') updateExplorer();
 });
 
 $('#analyze-btn').on('click', function () {
