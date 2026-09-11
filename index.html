@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شطرنجي - منصة التحليل والافتتاحيات</title>
+    <title>شطرنجي - موسوعة ومستكشف الشطرنج</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
@@ -39,7 +39,7 @@
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
-            max-width: 950px;
+            max-width: 1050px;
             width: 100%;
         }
         #board {
@@ -78,28 +78,57 @@
             font-size: 0.9rem;
             line-height: 1.5;
         }
+        .explorer-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 5px;
+        }
+        .explorer-item {
+            padding: 5px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+            background: rgba(255,255,255,0.03);
+            transition: background 0.2s;
+        }
+        .explorer-item:hover {
+            background: #38bdf8;
+            color: #0f172a;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>شطرنجي - موسوعة الافتتاحيات والمحلل</h1>
-        <p>اكتشاف الافتتاحيات والتحليل بالذكاء الاصطناعي</p>
+        <h1>شطرنجي - مع المستكشف والتحليل</h1>
+        <p>استعراض الافتتاحيات والمواقف بذكاء اصطناعي</p>
     </header>
 
     <div class="main-container">
         <div id="board"></div>
 
         <div class="panel">
-            <h3>لوحة التحكم والتحليل</h3>
+            <h3>لوحة التحكم</h3>
             <div class="info-box" id="status">الدور: الأبيض</div>
-            <div class="info-box" id="opening-name"><b>الافتتاحية:</b> اللعبة تبدأ من البداية</div>
+            <div class="info-box" id="opening-name"><b>الافتتاحية الحالية:</b> البداية</div>
+            
+            <!-- قسم المستكشف الجانبي -->
+            <div style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">مستكشف الافتتاحيات السريع:</div>
+            <div class="explorer-list" id="explorer-box">
+                <!-- يتم تعبئتها تلقائياً عبر ملف explorer.js -->
+            </div>
+
             <button id="analyze-btn">تحليل الموقف (Stockfish)</button>
             <div class="info-box" id="eval-result">اضغط على زر التحليل لقراءة تقييم الذكاء الاصطناعي...</div>
             <button id="reset-btn" style="background: #64748b; color: #fff;">إعادة ضبط اللوحة</button>
         </div>
     </div>
 
-    <!-- استدعاء الملف البرمجي المنفصل -->
+    <!-- استدعاء الملفات البرمجية المنفصلة -->
     <script src="game.js"></script>
+    <script src="explorer.js"></script>
 </body>
 </html>
